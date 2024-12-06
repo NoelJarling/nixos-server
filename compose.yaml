@@ -1,0 +1,25 @@
+version: "2.1"
+services:
+  duplicati:
+    image: ghcr.io/linuxserver/duplicati:2.0.8
+    container_name: duplicati
+    environment:
+      PUID: 0
+      PGID: 0
+      TZ: Europe/Amsterdam
+    volumes:
+      - /docker-data/duplicati/config:/config
+      - /docker-data/duplicati/backups:/backups
+      - /docker-data:/source/docker-data
+      - /etc/nixos/:/source/nixos
+      - /nas:/source/nas
+    #ports:
+    #  - 8200:8200
+    restart: unless-stopped
+    labels:
+      wud.tag.include: ^\d+\.?\d*\.?\d*$
+      wud.watch: true
+      traefik.enable: true
+      traefik.http.routers.duplicati.rule: Host("duplicati.njarling.com")
+      traefik.http.routers.duplicati.middlewares: authentik@file
+networks: {}
